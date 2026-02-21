@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guhan Gargya – Productivity Model</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: #dff0fb;
+      font-family: 'Source Sans 3', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 60px 24px 80px;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(100,160,210,.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(100,160,210,.08) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 36px;
+      animation: fadeDown .6s ease both;
+    }
+
+    header h1 {
+      font-family: 'Playfair Display', serif;
+      color: #1a3a6e;
+      font-size: clamp(1.4rem, 3.5vw, 2rem);
+      line-height: 1.45;
+      letter-spacing: .01em;
+    }
+
+    header h1 span.sub {
+      display: block;
+      font-size: clamp(1rem, 2.5vw, 1.3rem);
+      font-weight: 700;
+      color: #1e4080;
+    }
+
+    header h1 span.label {
+      display: block;
+      font-size: clamp(.85rem, 2vw, 1rem);
+      color: #2e5ea8;
+      margin-top: 6px;
+      font-family: 'Source Sans 3', sans-serif;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .divider {
+      width: 80px;
+      height: 3px;
+      background: linear-gradient(90deg, #1a3a6e, #4a90d9);
+      border-radius: 2px;
+      margin: 18px auto 0;
+    }
+
+    /* Model image */
+    .model-img-wrap {
+      animation: fadeUp .5s .1s ease both;
+      margin-bottom: 36px;
+      text-align: center;
+    }
+
+    .model-img-wrap img {
+      max-width: 340px;
+      width: 100%;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(26,58,110,.15);
+    }
+
+    /* Score display */
+    .score-section {
+      text-align: center;
+      margin-bottom: 40px;
+      animation: fadeUp .5s .15s ease both;
+    }
+
+    .score-label {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #1e4080;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .score-value {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3.5rem, 10vw, 5.5rem);
+      color: #1a3a6e;
+      line-height: 1;
+      letter-spacing: -.02em;
+      text-shadow: 0 2px 12px rgba(26,58,110,.18);
+      transition: color .3s ease;
+    }
+
+    .score-value.updated {
+      color: #1e7e34;
+    }
+
+    /* Main card */
+    .calc-card {
+      background: rgba(255,255,255,.72);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(26,58,110,.1);
+      border-radius: 18px;
+      padding: 36px 32px;
+      width: 100%;
+      max-width: 580px;
+      box-shadow: 0 6px 30px rgba(26,58,110,.1);
+      animation: fadeUp .5s .2s ease both;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      color: #1a3a6e;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid rgba(26,58,110,.12);
+    }
+
+    .field-group {
+      margin-bottom: 22px;
+    }
+
+    .field-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 7px;
+    }
+
+    .field-label span {
+      font-weight: 600;
+      color: #1e4080;
+      font-size: .95rem;
+    }
+
+    .field-label .var-tag {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: .78rem;
+      color: #5a7abf;
+      background: rgba(26,58,110,.07);
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+
+    .field-label .value-display {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      color: #1a3a6e;
+    }
+
+    /* Number inputs */
+    input[type="number"] {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1.5px solid rgba(26,58,110,.2);
+      border-radius: 9px;
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 1rem;
+      color: #1a3a6e;
+      background: rgba(255,255,255,.85);
+      outline: none;
+      transition: border-color .2s ease, box-shadow .2s ease;
+    }
+
+    input[type="number"]:focus {
+      border-color: #2e5ea8;
+      box-shadow: 0 0 0 3px rgba(46,94,168,.12);
+    }
+
+    input[type="number"]::placeholder {
+      color: #9ab0d0;
+    }
+
+    /* Sliders */
+    .slider-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      flex: 1;
+      height: 6px;
+      border-radius: 3px;
+      outline: none;
+      cursor: pointer;
+      transition: opacity .2s;
+    }
+
+    input[type="range"].blue-slider {
+      background: linear-gradient(90deg, #2e5ea8 var(--pct, 0%), rgba(26,58,110,.15) var(--pct, 0%));
+    }
+
+    input[type="range"].green-slider {
+      background: linear-gradient(90deg, #28a745 var(--pct, 0%), rgba(30,126,52,.15) var(--pct, 0%));
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #fff;
+      border: 2.5px solid #2e5ea8;
+      box-shadow: 0 2px 8px rgba(26,58,110,.2);
+      transition: transform .15s ease;
+    }
+
+    input[type="range"].green-slider::-webkit-slider-thumb {
+      border-color: #28a745;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+    }
+
+    .slider-val {
+      min-width: 42px;
+      text-align: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem;
+      color: #1a3a6e;
+      font-weight: 700;
+    }
+
+    .rec-note {
+      font-size: .75rem;
+      color: #5a7abf;
+      margin-top: 5px;
+      font-style: italic;
+    }
+
+    /* Weights note */
+    .weights-note {
+      background: rgba(26,58,110,.06);
+      border-left: 3px solid #2e5ea8;
+      border-radius: 0 8px 8px 0;
+      padding: 10px 14px;
+      margin-bottom: 22px;
+      font-size: .85rem;
+      color: #1e4080;
+      line-height: 1.5;
+    }
+
+    .separator {
+      height: 1px;
+      background: rgba(26,58,110,.1);
+      margin: 28px 0;
+    }
+
+    /* Calculate button */
+    .calc-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #1a3a6e 0%, #2e5ea8 100%);
+      color: #fff;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 4px 18px rgba(26,58,110,.25);
+      transition: transform .18s ease, box-shadow .18s ease;
+      letter-spacing: .01em;
+      margin-top: 8px;
+    }
+
+    .calc-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 26px rgba(26,58,110,.32);
+    }
+
+    .calc-btn:active {
+      transform: translateY(0);
+    }
+
+    /* Error */
+    .error-msg {
+      color: #c0392b;
+      font-size: .85rem;
+      margin-top: 10px;
+      text-align: center;
+      min-height: 1.2em;
+      font-weight: 600;
+    }
+
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>
+      Guhan Gargya – AP Research
+      <span class="sub">Mathematical Models in Quantifying Personal Productivity</span>
+      <span class="label">Productivity Model Prototype</span>
+    </h1>
+    <div class="divider"></div>
+  </header>
+
+  <div class="model-img-wrap">
+    <img src="model.png" alt="Productivity Model Formula">
+  </div>
+
+  <div class="score-section">
+    <div class="score-label">Your Productivity Score</div>
+    <div class="score-value" id="scoreDisplay">0.00</div>
+  </div>
+
+  <div class="calc-card">
+
+    <!-- INPUTS -->
+    <div class="section-title">Inputs</div>
+
+    <!-- Total Accuracy -->
+    <div class="field-group">
+      <div class="field-label">
+        <span>Total Accuracy</span>
+        <span class="var-tag">TA</span>
+      </div>
+      <div class="slider-wrap">
+        <input type="range" id="ta" class="blue-slider" min="0" max="100" value="0" step="1" oninput="updateSlider(this, 'taVal', '%')">
+        <span class="slider-val" id="taVal">0%</span>
+      </div>
+    </div>
+
+    <!-- Total Time -->
+    <div class="field-group">
+      <div class="field-label">
+        <span>Total Time</span>
+        <span class="var-tag">TT (minutes)</span>
+      </div>
+      <input type="number" id="tt" min="1" max="720" placeholder="Enter minutes (1–720)">
+    </div>
+
+    <!-- Quantity -->
+    <div class="field-group">
+      <div class="field-label">
+        <span>Quantity</span>
+        <span class="var-tag">Q (tasks)</span>
+      </div>
+      <input type="number" id="q" min="1" max="100" placeholder="Enter # of completed tasks (1–100)">
+    </div>
+
+    <!-- Break Time -->
+    <div class="field-group">
+      <div class="field-label">
+        <span>Total Break Time</span>
+        <span class="var-tag">T<sub>break</sub> (minutes)</span>
+      </div>
+      <input type="number" id="tbreak" min="0" max="720" placeholder="Enter minutes (0–720)">
+    </div>
+
+    <div class="separator"></div>
+
+    <!-- WEIGHTS -->
+    <div class="section-title">Weights</div>
+
+    <div class="weights-note">
+      For all three weights, <strong>10 = utmost importance</strong> and <strong>0 = no importance</strong>. Adjusting these changes how much each factor contributes to your final productivity score.
+    </div>
+
+    <!-- Alpha -->
+    <div class="field-group">
+      <div class="field-label">
+        <span>Accuracy Weightage</span>
+        <span class="var-tag">α (alpha)</span>
+      </div>
+      <div class="slider-wrap">
+        <input type="range" id="alpha" class="green-slider" min="0" max="10" value="6" step="1" oninput="updateWeightSlider(this, 'alphaVal')">
+        <span class="slider-val" id="alphaVal">6</span>
+      </div>
+      <div class="rec-note">Recommended: 6</div>
+    </div>
+
+    <!-- Beta -->
+    <div class="field-group">
+      <div class="field-label">
+        <span>Efficiency Weightage</span>
+        <span class="var-tag">β (beta)</span>
+      </div>
+      <div class="slider-wrap">
+        <input type="range" id="beta" class="green-slider" min="0" max="10" value="5" step="1" oninput="updateWeightSlider(this, 'betaVal')">
+        <span class="slider-val" id="betaVal">5</span>
+      </div>
+      <div class="rec-note">Recommended: 5</div>
+    </div>
+
+    <!-- Delta -->
+    <div class="field-group">
+      <div class="field-label">
+        <span>Break Time Weightage</span>
+        <span class="var-tag">δ (delta)</span>
+      </div>
+      <div class="slider-wrap">
+        <input type="range" id="delta" class="green-slider" min="0" max="10" value="5" step="1" oninput="updateWeightSlider(this, 'deltaVal')">
+        <span class="slider-val" id="deltaVal">5</span>
+      </div>
+      <div class="rec-note">Recommended: 5</div>
+    </div>
+
+    <button class="calc-btn" onclick="calculate()">Calculate Productivity</button>
+    <div class="error-msg" id="errorMsg"></div>
+
+  </div>
+
+  <footer>
+    <p><strong>Disclaimer:</strong> This tool is a prototype developed for academic research purposes. The underlying model and calculations are based on preliminary research findings and may contain errors or inaccuracies. Results should not be interpreted as definitive measures of productivity. The author makes no representations or warranties regarding the accuracy or completeness of the output produced by this tool.</p>
+  </footer>
+
+  <style>
+    footer {
+      margin-top: 40px;
+      max-width: 580px;
+      width: 100%;
+      text-align: center;
+      font-size: .78rem;
+      color: #4a6a9a;
+      line-height: 1.6;
+      padding: 16px 20px;
+      background: rgba(255,255,255,.5);
+      border: 1px solid rgba(26,58,110,.1);
+      border-radius: 10px;
+    }
+    footer strong {
+      color: #1e4080;
+    }
+  </style>
+
+  <script>
+    // Init slider fills on load
+    document.querySelectorAll('input[type="range"]').forEach(slider => {
+      updateFill(slider);
+    });
+
+    function updateFill(slider) {
+      const min = parseFloat(slider.min);
+      const max = parseFloat(slider.max);
+      const val = parseFloat(slider.value);
+      const pct = ((val - min) / (max - min)) * 100;
+      slider.style.setProperty('--pct', pct + '%');
+    }
+
+    function updateSlider(el, displayId, suffix) {
+      updateFill(el);
+      const pos = parseInt(el.value);
+      document.getElementById(displayId).textContent = pos + suffix;
+    }
+
+    function updateWeightSlider(el, displayId) {
+      updateFill(el);
+      document.getElementById(displayId).textContent = el.value;
+    }
+
+    function calculate() {
+      const errorEl = document.getElementById('errorMsg');
+      errorEl.textContent = '';
+
+      // Get values
+      const TA_pct = parseFloat(document.getElementById('ta').value);     // 0–100
+      const TT     = parseFloat(document.getElementById('tt').value);
+      const Q      = parseFloat(document.getElementById('q').value);
+      const Tbreak_raw = document.getElementById('tbreak').value;
+      const Tbreak = Tbreak_raw === '' ? NaN : parseFloat(Tbreak_raw);
+
+      const alpha_pos = parseInt(document.getElementById('alpha').value);
+      const beta_pos  = parseInt(document.getElementById('beta').value);
+      const delta_pos = parseInt(document.getElementById('delta').value);
+
+      // Convert weights
+      const TA    = TA_pct / 100;
+      const alpha = alpha_pos * 0.2;
+      const beta  = beta_pos  * 0.2;
+      const delta = delta_pos * 0.1;
+
+      // Validate inputs
+      if (isNaN(TT) || TT < 1 || TT > 720) {
+        errorEl.textContent = 'Please enter a valid Total Time (1–720 minutes).';
+        return;
+      }
+      if (isNaN(Q) || Q < 1 || Q > 100) {
+        errorEl.textContent = 'Please enter a valid Quantity (1–100 tasks).';
+        return;
+      }
+      if (isNaN(Tbreak) || Tbreak < 0 || Tbreak > 720) {
+        errorEl.textContent = 'Please enter a valid Total Break Time (0–720 minutes).';
+        return;
+      }
+
+      // P = [ TA^α * (Q/TT)^β ] / [ 100 * (1 + δ * (T_break / TT)) ]
+      // then multiply by 100 for display
+      const numerator   = Math.pow(TA, alpha) * Math.pow(Q / TT, beta);
+      const denominator = 100 * (1 + delta * (Tbreak / TT));
+      const P           = (numerator / denominator) * 100;
+
+      // Display
+      const display = document.getElementById('scoreDisplay');
+      display.textContent = P.toFixed(2);
+      display.classList.add('updated');
+      setTimeout(() => display.classList.remove('updated'), 1200);
+    }
+  </script>
+
+</body>
+</html>
